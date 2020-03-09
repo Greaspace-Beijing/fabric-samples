@@ -1,0 +1,102 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+   byfn:
+
+services:
+   mongodb0:
+      container_name: mongodb0
+      image: mongo
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=
+         - MONGO_INITDB_ROOT_PASSWORD=
+      ports:
+         - "27017:27017"
+      networks:
+         - byfn
+
+   peer0.org1.example.com:
+      environment:
+         - CORE_LEDGER_STATE_STATEDATABASE=MongoDB
+         - CORE_LEDGER_STATE_MONGODBCONFIG_MONGODBADDRESS=mongodb0:27017
+         # The CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME and CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD
+         # provide the credentials for ledger to connect to MongoDB.  The username and password must
+         # match the username and password set for the associated MongoDB.
+         - CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME=
+         - CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD=
+      depends_on:
+         - mongodb0
+
+   mongodb1:
+      container_name: mongodb1
+      image: mongo
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=
+         - MONGO_INITDB_ROOT_PASSWORD=
+      ports:
+         - "27117:27017"
+      networks:
+         - byfn
+
+   peer1.org1.example.com:
+      environment:
+         - CORE_LEDGER_STATE_STATEDATABASE=MongoDB
+         - CORE_LEDGER_STATE_MONGODBCONFIG_MONGODBADDRESS=mongodb1:27017
+         # The CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME and CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD
+         # provide the credentials for ledger to connect to MongoDB.  The username and password must
+         # match the username and password set for the associated MongoDB.
+         - CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME=
+         - CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD=
+      depends_on:
+         - mongodb1
+
+   mongodb2:
+      container_name: mongodb2
+      image: mongo
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=
+         - MONGO_INITDB_ROOT_PASSWORD=
+      ports:
+         - "27217:27017"
+      networks:
+         - byfn
+
+   peer0.org2.example.com:
+      environment:
+         - CORE_LEDGER_STATE_STATEDATABASE=MongoDB
+         - CORE_LEDGER_STATE_MONGODBCONFIG_MONGODBADDRESS=mongodb2:27017
+         # The CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME and CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD
+         # provide the credentials for ledger to connect to MongoDB.  The username and password must
+         # match the username and password set for the associated MongoDB.
+         - CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME=
+         - CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD=
+      depends_on:
+         - mongodb2
+
+   mongodb3:
+      container_name: mongodb3
+      image: mongo
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=
+         - MONGO_INITDB_ROOT_PASSWORD=
+      ports:
+         - "27317:27017"
+      networks:
+         - byfn
+
+   peer1.org2.example.com:
+      environment:
+         - CORE_LEDGER_STATE_STATEDATABASE=MongoDB
+         - CORE_LEDGER_STATE_MONGODBCONFIG_MONGODBADDRESS=mongodb3:27017
+         # The CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME and CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD
+         # provide the credentials for ledger to connect to MongoDB.  The username and password must
+         # match the username and password set for the associated MongoDB.
+         - CORE_LEDGER_STATE_MONGODBCONFIG_USERNAME=
+         - CORE_LEDGER_STATE_MONGODBCONFIG_PASSWORD=
+      depends_on:
+         - mongodb3

@@ -38,7 +38,13 @@ async function main() {
         // Submit the specified transaction.
         // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
         // changeCarOwner transaction - requires 2 args , ex: ('changeCarOwner', 'CAR10', 'Dave')
-        await contract.submitTransaction('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom');
+        // await contract.submitTransaction('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom');
+        let carname;
+        for(var i = 10; i < 100;i++){
+            carname = "CAR" + i;
+            console.log(carname)
+            await contract.submitTransaction('createCar', carname, 'Honda', 'Accord', 'Black', 'Tom');
+        }
         console.log('Transaction has been submitted');
 
         // Disconnect from the gateway.

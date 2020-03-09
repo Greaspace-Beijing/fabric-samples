@@ -46,7 +46,7 @@ function printHelp() {
   echo "    -t <timeout> - CLI timeout duration in seconds (defaults to 10)"
   echo "    -d <delay> - delay duration in seconds (defaults to 3)"
   echo "    -f <docker-compose-file> - specify which docker-compose file use (defaults to docker-compose-cli.yaml)"
-  echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
+  echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb, mongodb"
   echo "    -l <language> - the chaincode language: golang (default) or node"
   echo "    -o <consensus-type> - the consensus-type of the ordering service: solo (default), kafka, or etcdraft"
   echo "    -i <imagetag> - the tag to be used to launch the network (defaults to \"latest\")"
@@ -59,8 +59,8 @@ function printHelp() {
   echo "genesis block, then bring up the network. e.g.:"
   echo
   echo "	byfn.sh generate -c mychannel"
-  echo "	byfn.sh up -c mychannel -s couchdb"
-  echo "        byfn.sh up -c mychannel -s couchdb -i 1.4.0"
+  echo "	byfn.sh up -c mychannel -s couchdb or mongodb"
+  echo "        byfn.sh up -c mychannel -s couchdb or mongodb -i 1.4.0"
   echo "	byfn.sh up -l node"
   echo "	byfn.sh down -c mychannel"
   echo "        byfn.sh upgrade -c mychannel"
@@ -171,6 +171,8 @@ function networkUp() {
   fi
   if [ "${IF_COUCHDB}" == "couchdb" ]; then
     COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_COUCH}"
+  elif [ "${IF_COUCHDB}" == "mongodb" ]; then
+    COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_MONGO}"
   fi
   IMAGE_TAG=$IMAGETAG docker-compose ${COMPOSE_FILES} up -d 2>&1
   docker ps -a
@@ -229,6 +231,8 @@ function upgradeNetwork() {
     fi
     if [ "${IF_COUCHDB}" == "couchdb" ]; then
       COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_COUCH}"
+    elif [ "${IF_COUCHDB}" == "mongodb" ]; then
+      COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_MONGO}"
     fi
 
     # removing the cli container
@@ -275,7 +279,7 @@ function upgradeNetwork() {
 function networkDown() {
   # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
   # stop kafka and zookeeper containers in case we're running with kafka consensus-type
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_CA -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_MONGO -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_CA -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
 
   # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
@@ -496,8 +500,10 @@ SYS_CHANNEL="byfn-sys-channel"
 CHANNEL_NAME="mychannel"
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE=docker-compose-cli.yaml
-#
+# couchdb compose file
 COMPOSE_FILE_COUCH=docker-compose-couch.yaml
+# mongodb compose file
+COMPOSE_FILE_MONGO=docker-compose-mongo.yaml
 # org3 docker compose file
 COMPOSE_FILE_ORG3=docker-compose-org3.yaml
 # kafka and zookeeper compose file
@@ -583,6 +589,9 @@ done
 if [ "${IF_COUCHDB}" == "couchdb" ]; then
   echo
   echo "${EXPMODE} for channel '${CHANNEL_NAME}' with CLI timeout of '${CLI_TIMEOUT}' seconds and CLI delay of '${CLI_DELAY}' seconds and using database '${IF_COUCHDB}'"
+elif [ "${IF_COUCHDB}" == "mongodb" ]; then
+  echo
+  echo "${EXPMODE} for channel '${CHANNEL_NAME}' with CLI timeout of '${CLI_TIMEOUT}' seconds and CLI delay of '${CLI_DELAY}' seconds and using database '${STATEDB}'"
 else
   echo "${EXPMODE} for channel '${CHANNEL_NAME}' with CLI timeout of '${CLI_TIMEOUT}' seconds and CLI delay of '${CLI_DELAY}' seconds"
 fi

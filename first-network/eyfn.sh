@@ -30,7 +30,7 @@ function printHelp () {
   echo "    -t <timeout> - CLI timeout duration in seconds (defaults to 10)"
   echo "    -d <delay> - delay duration in seconds (defaults to 3)"
   echo "    -f <docker-compose-file> - specify which docker-compose file use (defaults to docker-compose-cli.yaml)"
-  echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
+  echo "    -s <dbtype> - the database backend to use: goleveldb (default), couchdb or mongodb"
   echo "    -l <language> - the chaincode language: golang (default) or node"
   echo "    -i <imagetag> - the tag to be used to launch the network (defaults to \"latest\")"
   echo "    -v - verbose mode"
@@ -101,6 +101,9 @@ function networkUp () {
   # start org3 peers
   if [ "${IF_COUCHDB}" == "couchdb" ]; then
       IMAGE_TAG=${IMAGETAG} docker-compose -f $COMPOSE_FILE_ORG3 -f $COMPOSE_FILE_COUCH_ORG3 up -d 2>&1
+  elif [ "${IF_COUCHDB}" == "mongodb" ]; then
+      IMAGE_TAG=${IMAGETAG} docker-compose -f $COMPOSE_FILE_ORG3 -f $COMPOSE_FILE_MONGO_ORG3 up -d 2>&1
+
   else
       IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE_ORG3 up -d 2>&1
   fi
@@ -136,7 +139,7 @@ function networkUp () {
 
 # Tear down running network
 function networkDown () {
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_ORG3 -f $COMPOSE_FILE_COUCH down --volumes --remove-orphans
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_ORG3 -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_MONGO down --volumes --remove-orphans
   # Don't remove containers, images, etc if restarting
   if [ "$MODE" != "restart" ]; then
     #Cleanup the chaincode containers
@@ -241,10 +244,14 @@ CHANNEL_NAME="mychannel"
 COMPOSE_FILE=docker-compose-cli.yaml
 #
 COMPOSE_FILE_COUCH=docker-compose-couch.yaml
+#
+COMPOSE_FILE_MONGO=docker-compose-mongo.yaml
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE_ORG3=docker-compose-org3.yaml
 #
 COMPOSE_FILE_COUCH_ORG3=docker-compose-couch-org3.yaml
+#
+COMPOSE_FILE_MONGO_ORG3=docker-compose-mongo-org3.yaml
 # kafka and zookeeper compose file
 COMPOSE_FILE_KAFKA=docker-compose-kafka.yaml
 # two additional etcd/raft orderers
@@ -302,6 +309,9 @@ done
   if [ "${IF_COUCHDB}" == "couchdb" ]; then
         echo
         echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOUT}' seconds and CLI delay of '${CLI_DELAY}' seconds and using database '${IF_COUCHDB}'"
+  elif [ "${IF_COUCHDB}" == "mongodb" ]; then
+        echo
+        echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOUT}' seconds and CLI delay of '${CLI_DELAY}' seconds and using database '${STATEDB}'"
   else
         echo "${EXPMODE} with channel '${CHANNEL_NAME}' and CLI timeout of '${CLI_TIMEOUT}' seconds and CLI delay of '${CLI_DELAY}' seconds"
   fi
