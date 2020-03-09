@@ -13,7 +13,7 @@ networks:
 services:
   cliMagnetoCorp:
     container_name: cliMagnetoCorp
-    image: hyperledger/fabric-tools
+    image: greaspacebj/fabric-tools
     tty: true
     environment:
       - GOPATH=/opt/gopath

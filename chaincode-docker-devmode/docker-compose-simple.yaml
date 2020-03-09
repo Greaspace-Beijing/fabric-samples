@@ -22,7 +22,7 @@ services:
       - 7050:7050
   peer:
     container_name: peer
-    image: hyperledger/fabric-peer
+    image: greaspacebj/fabric-peer
     environment:
       - CORE_PEER_ID=peer
       - CORE_PEER_ADDRESS=peer:7051
@@ -44,7 +44,7 @@ services:
 
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools
+    image: greaspacebj/fabric-tools
     tty: true
     environment:
       - GOPATH=/opt/gopath

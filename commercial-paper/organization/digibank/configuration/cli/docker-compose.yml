@@ -13,7 +13,7 @@ networks:
 services:
   cliDigiBank:
     container_name: cliDigiBank
-    image: hyperledger/fabric-tools
+    image: greaspacebj/fabric-tools
     tty: true
     environment:
       - GOPATH=/opt/gopath

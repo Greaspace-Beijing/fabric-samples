@@ -73,7 +73,7 @@ function checkPrereqs() {
   # Note, we check configtxlator externally because it does not require a config file, and peer in the
   # docker image because of FAB-8551 that makes configtxlator return 'development version' in docker
   LOCAL_VERSION=$(configtxgen -version | sed -ne 's/ Version: //p')
-  DOCKER_IMAGE_VERSION=$(docker run --rm hyperledger/fabric-tools:$IMAGETAG peer version | sed -ne 's/ Version: //p' | head -1)
+  DOCKER_IMAGE_VERSION=$(docker run --rm greaspacebj/fabric-tools:$IMAGETAG peer version | sed -ne 's/ Version: //p' | head -1)
 
   echo "LOCAL_VERSION=$LOCAL_VERSION"
   echo "DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_VERSION"
@@ -128,7 +128,7 @@ function networkDown() {
 
   # Bring down the network, deleting the volumes
   #Delete any ledger backups
-  docker run -v $PWD:/tmp/first-network --rm hyperledger/fabric-tools:$IMAGETAG rm -Rf /tmp/first-network/ledgers-backup
+  docker run -v $PWD:/tmp/first-network --rm greaspacebj/fabric-tools:$IMAGETAG rm -Rf /tmp/first-network/ledgers-backup
   #Cleanup the chaincode containers
   clearContainers
   #Cleanup images
