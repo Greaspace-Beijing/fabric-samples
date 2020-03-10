@@ -28,6 +28,9 @@ chmod +x ./scripts/bootstrap.sh
 # Download binaries and docker images
 ./scripts/bootstrap.sh [version] [ca version] [thirdparty_version]
 ```
+```bash one command
+curl -sSL http://bit.ly/2U5BXlx | bash -s -- 1.4.6 1.4.6 0.4.18
+```
 
 ### Continuous Integration
 
