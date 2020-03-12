@@ -22,7 +22,7 @@ You can also download the script and execute locally:
 
 ```bash
 # Fetch bootstrap.sh from fabric repository using
-curl -sS https://raw.githubusercontent.com/Greaspace-Beijing/fabric/master/scripts/bootstrap.sh -o ./scripts/bootstrap.sh
+curl -sS https://raw.githubusercontent.com/Greaspace-Beijing/fabric/v1.4.6-mongodb/scripts/bootstrap.sh -o ./scripts/bootstrap.sh
 # Change file mode to executable
 chmod +x ./scripts/bootstrap.sh
 # Download binaries and docker images
